@@ -1,6 +1,7 @@
 package domain
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"time"
 )
 
@@ -21,3 +22,11 @@ func NewTransaction() *Transaction {
 	return t
 }
 
+func (t *Transaction) ProcessAndValidate(creditCard *CreditCard) {
+	if t.Amount + creditCard.Balance > creditCard.Limit {
+		t.Status = "rejected"
+	} else {
+		t.Status = "approved"
+		creditCard.Balance = creditCard.Balance + t.Amount
+	}
+}
